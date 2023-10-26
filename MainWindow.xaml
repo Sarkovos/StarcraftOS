@@ -1,0 +1,82 @@
+﻿<Window x:Class="StarcraftOS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StarcraftOS"
+        mc:Ignorable="d"
+        Title="SOS" Height="800" Width="800">
+	<Grid Name="MainGrid">
+		<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+			<StackPanel>
+				<Grid Name="SOButtons" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+				<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+					<StackPanel>
+						<RadioButton Name="SButton" Content="S" IsChecked="True" Foreground="White" Margin="5">
+
+						</RadioButton>
+						<RadioButton Name="OButton" Content="O" Foreground="White" Margin="5">
+
+						</RadioButton>
+					</StackPanel>
+				</Border>
+			</Grid>
+				<Grid Name="GameButtons" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+					<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+						<StackPanel>
+							<RadioButton Name="SimpleButton" Content="Simple Game" IsChecked="True" Foreground="White" Margin="5">
+							</RadioButton>
+							<RadioButton Name="GeneralButton" Content="General Game" Foreground="White" Margin="5">
+							</RadioButton>
+						</StackPanel>
+					</Border>
+				</Grid>
+			</StackPanel>
+		</Border>
+
+		<Grid Name="TieText" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10" Visibility="Hidden">
+			<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+				<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="It's a draw!" VerticalAlignment="Bottom" Margin="10,0,10,0"
+					   FontSize="50" Foreground="White"/>
+			</Border>
+		</Grid>
+
+
+		<Grid Name="numericUpDown" HorizontalAlignment="Right" VerticalAlignment="Top" Height="60" Width="83" Margin="10">
+			<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<!-- Auto-size the first column -->
+						<ColumnDefinition Width="Auto"/>
+						<!-- Auto-size the second column -->
+					</Grid.ColumnDefinitions>
+
+					<TextBox x:Name="GridSizeTextBox" Text="{Binding GridSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" Height="20" HorizontalAlignment="Right" VerticalAlignment="Center" TextChanged="SizeTextChanged" />
+					<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="5">
+						<Button Content="&#x25B2;" BorderBrush="Gray" Background="#141414" Foreground="White" FontSize="9" Width="15" Height="20" Click="ClickUp"/>
+						<Button Content="&#x25BC;" BorderBrush="Gray" Background="#141414" Foreground="White" Width="15" Height="20" FontSize="9" Click="ClickDown"/>
+					</StackPanel>
+				</Grid>
+			</Border>
+		</Grid>
+		<Grid Name="SOSGrid" HorizontalAlignment="Center" VerticalAlignment="Center"
+			  Height="400" Width="400">
+
+		</Grid>
+		
+
+
+	</Grid>
+
+	<Window.Background>
+		<SolidColorBrush Color="#141414"/>
+		<!-- Dark background color -->
+	</Window.Background>
+	
+	<Window.Foreground>
+		<SolidColorBrush Color="DarkGreen"/>
+		<!-- Text color -->
+	</Window.Foreground>
+
+</Window>
