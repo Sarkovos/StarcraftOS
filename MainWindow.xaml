@@ -41,6 +41,22 @@
 			</Border>
 		</Grid>
 
+		<Grid Name="WinnerText" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10" Visibility="Hidden">
+			<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+				<TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Winner!" VerticalAlignment="Bottom" Margin="10,0,10,0"
+			   FontSize="50" Foreground="White"/>
+			</Border>
+		</Grid>
+
+		<Grid Name="TurnText" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10">
+			<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+				<TextBlock Name="turnTextBlock" FontSize="35" Foreground="White">
+					<Run Text="Player Turn: " />
+					
+				</TextBlock>
+			</Border>
+		</Grid>
+
 
 		<Grid Name="numericUpDown" HorizontalAlignment="Right" VerticalAlignment="Top" Height="60" Width="83" Margin="10">
 			<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">

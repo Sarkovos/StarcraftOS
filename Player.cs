@@ -1,38 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StarcraftOS
+﻿namespace StarcraftOS
 {
     internal class Player
     {
-        //Red Player starts first
-        //red is false, blue is true
-        int turnCount;
-        public Player()
+        private static Player instance;
+        private int turnCount = 0;
+
+        // Private constructor to prevent external instantiation
+        private Player() { }
+
+        public static Player Instance
         {
-            turnCount = 0;
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Player();
+                }
+                return instance;
+            }
         }
-       
+
         public bool PlayerTurn()
         {
             turnCount++;
+            return turnCount % 2 == 0;
+        }
+
+        // Expose a property to get the turnCount
+        public int TurnCount
+        {
+            get { return turnCount; }
+        }
+
+        // Expose a method to increment the turnCount
+        public void IncrementTurnCount()
+        {
+            turnCount++;
+        }
+
+        public string PlayerTurnString()
+        {
             if (turnCount % 2 == 0)
             {
-                return true;
+                return "Blue";
             }
 
             else
             {
-                return false;
+                return "Red";
             }
         }
-
-
-
-
 
 
     }

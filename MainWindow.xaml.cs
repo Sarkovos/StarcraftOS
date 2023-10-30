@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,7 +26,6 @@ namespace StarcraftOS
         int defaultGridSize = 8;
 
         private int _gridSize;
-        private Player player;
         private GameType gameType;
 
         public int GridSize
@@ -49,12 +50,16 @@ namespace StarcraftOS
         public MainWindow()
         {
             InitializeComponent();
-            player = new Player();
             gameType = new GameType(this);
             GridSize = defaultGridSize;
             DataContext = this;
             GridSizeTextBox.Text = GridSize.ToString();
             MakeGrid(GridSize);
+
+            turnTextBlock.Inlines.Clear();
+            Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+            turnTextBlock.Inlines.Add(runPlayerText);
+
         }
 
         private void MakeGrid(int n)
@@ -131,6 +136,7 @@ namespace StarcraftOS
         {
             Button square = (Button)sender;
 
+            //Get the position of that square
             int x = Grid.GetRow(square);
             int y = Grid.GetColumn(square);
 
@@ -143,8 +149,14 @@ namespace StarcraftOS
                     square.FontSize = 24;
                     square.Foreground = Brushes.White;
 
-                    gameType.UpdateGrid(x, y);
-                    gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize);
+                    gameType.UpdateGrid(x, y, (bool)SButton.IsChecked);
+                    gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);
+                    Player.Instance.IncrementTurnCount();
+
+                    turnTextBlock.Inlines.Clear();
+                    Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+                    turnTextBlock.Inlines.Add(runPlayerText);
+
                 }
                 
                 else
@@ -152,8 +164,67 @@ namespace StarcraftOS
                     square.Content = "O";
                     square.FontSize = 24;
                     square.Foreground = Brushes.White;
-                    gameType.UpdateGrid(x, y);
-                    gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize);
+                    gameType.UpdateGrid(x, y, (bool)SButton.IsChecked);
+                    gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);
+                    Player.Instance.IncrementTurnCount();
+
+                    turnTextBlock.Inlines.Clear();
+                    Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+                    turnTextBlock.Inlines.Add(runPlayerText);
+
+
+                }
+            }    
+            
+            if ((bool)SimpleButton.IsChecked)
+            {
+                if (gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize))
+                {
+                    gameType.SimpleDraw();
+                }
+
+                else
+                {
+                    string winner = gameType.Winner((bool)SimpleButton.IsChecked);
+                    if (winner != "null")
+                    {
+                        Run runWinner = new Run($"{winner} has won!");
+                        runWinner.Foreground = Brushes.White;
+                        runWinner.FontSize = 40;
+                        
+
+                        TextBlock winnerTextBlock = new TextBlock();
+                        winnerTextBlock.Inlines.Add(runWinner);
+                        winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                        winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
+                        winnerTextBlock.Margin = new Thickness(10);
+
+
+                        MainGrid.Children.Add(winnerTextBlock);
+
+                    }
+                    
+                }
+            }
+
+            else
+            {
+                if (gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize))
+                {
+                    string winner = gameType.Winner((bool)SimpleButton.IsChecked);
+                    Run runWinner = new Run($"{winner} has won!");
+                    runWinner.Foreground = Brushes.White;
+                    runWinner.FontSize = 40;
+
+
+                    TextBlock winnerTextBlock = new TextBlock();
+                    winnerTextBlock.Inlines.Add(runWinner);
+                    winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                    winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
+                    winnerTextBlock.Margin = new Thickness(10);
+
+
+                    MainGrid.Children.Add(winnerTextBlock);
                 }
             }
 
@@ -164,9 +235,10 @@ namespace StarcraftOS
             TieText.Visibility = Visibility.Visible;
         }
 
-        private void TurnText()
+        public void WinText()
         {
-
+            WinnerText.Visibility = Visibility.Visible;
         }
+
     }
 }
