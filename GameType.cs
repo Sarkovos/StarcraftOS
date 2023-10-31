@@ -24,7 +24,7 @@ namespace StarcraftOS
             gameWindow = window;
         }
 
-        public void CreateGrid(int gridSize)
+        public void CreateGridMatrix(int gridSize)
         {
             gameBoard.Clear();
             for (int i = 0; i < gridSize; i++)
@@ -61,10 +61,6 @@ namespace StarcraftOS
 
         }
 
-        public void SimpleDraw()
-        {
-            gameWindow.TieGameText();
-        }
 
         public void Scoring()
         {
@@ -100,19 +96,19 @@ namespace StarcraftOS
 
             else
             {
-                if (blueScore > redScore) 
+                if (blueScore == redScore)
+                {
+                    return "null";
+                }
+                else if (blueScore > redScore) 
                 {
                     return "Blue";
                 }
-
                 else
                 {
                     return "Red";
-                }
-
-                
+                } 
             }
-
         }
 
         public void CheckForSOS(int x, int y, bool isS)
@@ -305,6 +301,5 @@ namespace StarcraftOS
                 }
             }
         }
-
     }
 }

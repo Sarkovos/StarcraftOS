@@ -20,9 +20,9 @@
             }
         }
 
+        //Bool Version of Player Turn - Red is false, Blue is true
         public bool PlayerTurn()
         {
-            turnCount++;
             return turnCount % 2 == 0;
         }
 
@@ -30,6 +30,7 @@
         public int TurnCount
         {
             get { return turnCount; }
+            set { turnCount = value; }
         }
 
         // Expose a method to increment the turnCount
@@ -38,16 +39,17 @@
             turnCount++;
         }
 
+        //String Version of Player Turn
         public string PlayerTurnString()
         {
             if (turnCount % 2 == 0)
             {
-                return "Blue";
+                return "Red";
             }
 
             else
             {
-                return "Red";
+                return "Blue";
             }
         }
 

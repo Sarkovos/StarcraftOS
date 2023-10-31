@@ -51,8 +51,6 @@
 		<Grid Name="TurnText" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10">
 			<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
 				<TextBlock Name="turnTextBlock" FontSize="35" Foreground="White">
-					<Run Text="Player Turn: " />
-					
 				</TextBlock>
 			</Border>
 		</Grid>

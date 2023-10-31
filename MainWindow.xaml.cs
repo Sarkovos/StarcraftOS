@@ -64,7 +64,7 @@ namespace StarcraftOS
 
         private void MakeGrid(int n)
         {
-            gameType.CreateGrid(GridSize);
+            gameType.CreateGridMatrix(GridSize);
 
             double buttonSize = SIZEOFGRID / n;
             for (int i = 0; i < n; i++)
@@ -104,6 +104,7 @@ namespace StarcraftOS
         private void ClearGrid()
         { 
             SOSGrid.Children.Clear();
+            Player.Instance.TurnCount = 0;
         }
 
         private void ClickUp(object sender, RoutedEventArgs e)
@@ -143,101 +144,98 @@ namespace StarcraftOS
             //Check if the button has been clicked before
             if (gameType.gameBoard[x][y] == 0)
             {
+                //S Text Details
                 if (SButton.IsChecked == true)
                 {
                     square.Content = "S";
                     square.FontSize = 24;
                     square.Foreground = Brushes.White;
-
-                    gameType.UpdateGrid(x, y, (bool)SButton.IsChecked);
-                    gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);
-                    Player.Instance.IncrementTurnCount();
-
-                    turnTextBlock.Inlines.Clear();
-                    Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
-                    turnTextBlock.Inlines.Add(runPlayerText);
-
                 }
                 
+                //O Text Details
                 else
-                {
+                {                 
                     square.Content = "O";
                     square.FontSize = 24;
                     square.Foreground = Brushes.White;
-                    gameType.UpdateGrid(x, y, (bool)SButton.IsChecked);
-                    gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);
-                    Player.Instance.IncrementTurnCount();
-
-                    turnTextBlock.Inlines.Clear();
-                    Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
-                    turnTextBlock.Inlines.Add(runPlayerText);
-
-
                 }
-            }    
-            
+
+                gameType.UpdateGrid(x, y, (bool)SButton.IsChecked);
+
+                //Update whose turn it is and increment turn counter.
+                Player.Instance.IncrementTurnCount();
+                turnTextBlock.Inlines.Clear();
+                Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+                turnTextBlock.Inlines.Add(runPlayerText);
+
+                gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);         
+               
+            }
+
+            //Set the winner as a string
+            string winner = gameType.Winner((bool)SimpleButton.IsChecked);
+
+            //If Simple Game...
             if ((bool)SimpleButton.IsChecked)
             {
+                //If the grid is full in a simple game, it is a draw since no one got a point
                 if (gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize))
                 {
-                    gameType.SimpleDraw();
+                    TieGameText();
                 }
 
+                //If it is not full...
                 else
                 {
-                    string winner = gameType.Winner((bool)SimpleButton.IsChecked);
+                    //If a winner has been determined...
                     if (winner != "null")
                     {
-                        Run runWinner = new Run($"{winner} has won!");
-                        runWinner.Foreground = Brushes.White;
-                        runWinner.FontSize = 40;
-                        
-
-                        TextBlock winnerTextBlock = new TextBlock();
-                        winnerTextBlock.Inlines.Add(runWinner);
-                        winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                        winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-                        winnerTextBlock.Margin = new Thickness(10);
-
-
-                        MainGrid.Children.Add(winnerTextBlock);
-
-                    }
-                    
+                        WinText(winner);
+                    }                   
                 }
             }
 
+            //If a general game...
             else
             {
                 if (gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize))
                 {
-                    string winner = gameType.Winner((bool)SimpleButton.IsChecked);
-                    Run runWinner = new Run($"{winner} has won!");
-                    runWinner.Foreground = Brushes.White;
-                    runWinner.FontSize = 40;
+                    if (winner != "null")
+                    {
+                        WinText((winner));
+                    }
 
-
-                    TextBlock winnerTextBlock = new TextBlock();
-                    winnerTextBlock.Inlines.Add(runWinner);
-                    winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                    winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-                    winnerTextBlock.Margin = new Thickness(10);
-
-
-                    MainGrid.Children.Add(winnerTextBlock);
+                    else
+                    {
+                        TieGameText();
+                    }
                 }
             }
 
         }
 
+
+        //Make the "It's a draw!" text visible.
         public void TieGameText()
         {
             TieText.Visibility = Visibility.Visible;
         }
 
-        public void WinText()
+        //Take the winner variable and make a text block for it.
+        private void WinText(string winner)
         {
-            WinnerText.Visibility = Visibility.Visible;
+            Run runWinner = new Run($"{winner} has won!");
+            runWinner.Foreground = Brushes.White;
+            runWinner.FontSize = 40;
+
+
+            TextBlock winnerTextBlock = new TextBlock();
+            winnerTextBlock.Inlines.Add(runWinner);
+            winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
+            winnerTextBlock.Margin = new Thickness(10);
+
+            MainGrid.Children.Add(winnerTextBlock);
         }
 
     }
