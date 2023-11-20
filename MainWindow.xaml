@@ -31,6 +31,33 @@
 						</StackPanel>
 					</Border>
 				</Grid>
+				<Grid Name="RedPlayer" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+					<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+						<StackPanel>
+							<RadioButton Name="RedHuman" Content="Red - Human" IsChecked="True" Foreground="White" Margin="5">
+							</RadioButton>
+							<RadioButton Name="RedComputer" Content="Red - Computer" Foreground="White" Margin="5">
+							</RadioButton>
+						</StackPanel>
+					</Border>
+				</Grid>
+				<Grid Name="BluePlayer" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+					<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+						<StackPanel>
+							<RadioButton Name="BlueHuman" Content="Blue - Human" IsChecked="True" Foreground="White" Margin="5">
+							</RadioButton>
+							<RadioButton Name="BlueComputer" Content="Blue - Computer" Foreground="White" Margin="5">
+							</RadioButton>
+						</StackPanel>
+					</Border>
+				</Grid>
+				<Grid Name="StartButton" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+					<Border BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="8,8,8,8">
+						<Button Name="RestartButton" Content ="Restart" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" Margin="2" Click="RestartClicked" />
+					</Border>
+				</Grid>
+
+
 			</StackPanel>
 		</Border>
 

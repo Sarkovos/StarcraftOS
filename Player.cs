@@ -20,7 +20,7 @@
             }
         }
 
-        //Bool Version of Player Turn - Red is false, Blue is true
+        //Bool Version of Player Turn - Red is true, Blue is false
         public bool PlayerTurn()
         {
             return turnCount % 2 == 0;
@@ -42,7 +42,7 @@
         //String Version of Player Turn
         public string PlayerTurnString()
         {
-            if (turnCount % 2 == 0)
+            if (PlayerTurn())
             {
                 return "Red";
             }

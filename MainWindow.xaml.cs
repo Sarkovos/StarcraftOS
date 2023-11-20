@@ -28,6 +28,10 @@ namespace StarcraftOS
         private int _gridSize;
         private GameType gameType;
 
+
+
+        string winner = "null";
+
         public int GridSize
         {
             get { return _gridSize; }
@@ -105,6 +109,10 @@ namespace StarcraftOS
         { 
             SOSGrid.Children.Clear();
             Player.Instance.TurnCount = 0;
+            
+            turnTextBlock.Inlines.Clear();
+            Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+            turnTextBlock.Inlines.Add(runPlayerText);
         }
 
         private void ClickUp(object sender, RoutedEventArgs e)
@@ -132,8 +140,15 @@ namespace StarcraftOS
             }
         }
 
-
         private void SquareClicked(object sender, RoutedEventArgs e)
+        {
+            if (winner == "null")
+            {
+                buttonLogic(sender);
+            }
+        }
+
+        private void buttonLogic(object sender)
         {
             Button square = (Button)sender;
 
@@ -151,10 +166,10 @@ namespace StarcraftOS
                     square.FontSize = 24;
                     square.Foreground = Brushes.White;
                 }
-                
+
                 //O Text Details
                 else
-                {                 
+                {
                     square.Content = "O";
                     square.FontSize = 24;
                     square.Foreground = Brushes.White;
@@ -162,18 +177,44 @@ namespace StarcraftOS
 
                 gameType.UpdateGrid(x, y, (bool)SButton.IsChecked);
 
-                //Update whose turn it is and increment turn counter.
-                Player.Instance.IncrementTurnCount();
-                turnTextBlock.Inlines.Clear();
-                Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
-                turnTextBlock.Inlines.Add(runPlayerText);
+                Run runPlayerText = new Run(" ");
+                Player.Instance.IncrementTurnCount();                
 
-                gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);         
-               
+                turnTextBlock.Inlines.Clear();
+                runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+                turnTextBlock.Inlines.Add(runPlayerText);
+                gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);
+                winRules();
+
+                if ((bool)BlueComputer.IsChecked || (bool)RedComputer.IsChecked)
+                {
+
+                    //red is true, blue is false
+                    if (Player.Instance.PlayerTurn())
+                    {
+
+                        if ((bool)RedComputer.IsChecked)
+                        {
+                            computerMove();
+                        }
+                    }
+                    else
+                    {
+                        if ((bool)BlueComputer.IsChecked)
+                        {
+                            computerMove();
+                        }
+                    }
+                }
             }
 
-            //Set the winner as a string
-            string winner = gameType.Winner((bool)SimpleButton.IsChecked);
+            
+
+        }
+
+        private void winRules()
+        {
+             
 
             //If Simple Game...
             if ((bool)SimpleButton.IsChecked)
@@ -187,11 +228,14 @@ namespace StarcraftOS
                 //If it is not full...
                 else
                 {
+                    //Set the winner as a string
+                    winner = gameType.Winner((bool)SimpleButton.IsChecked);
+
                     //If a winner has been determined...
                     if (winner != "null")
                     {
                         WinText(winner);
-                    }                   
+                    }
                 }
             }
 
@@ -200,6 +244,8 @@ namespace StarcraftOS
             {
                 if (gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize))
                 {
+                    //Set the winner as a string
+                    winner = gameType.Winner((bool)SimpleButton.IsChecked);
                     if (winner != "null")
                     {
                         WinText((winner));
@@ -211,7 +257,6 @@ namespace StarcraftOS
                     }
                 }
             }
-
         }
 
 
@@ -221,22 +266,88 @@ namespace StarcraftOS
             TieText.Visibility = Visibility.Visible;
         }
 
-        //Take the winner variable and make a text block for it.
+        private TextBlock winnerTextBlock;
+
         private void WinText(string winner)
         {
-            Run runWinner = new Run($"{winner} has won!");
-            runWinner.Foreground = Brushes.White;
-            runWinner.FontSize = 40;
+            // Check if winnerTextBlock is not null, and winner is not "null"
+            if (winnerTextBlock != null && winner != "null")
+            {
+                // Remove existing winnerTextBlock
+                MainGrid.Children.Remove(winnerTextBlock);
+                winnerTextBlock = null;
+            }
 
+            if (winner != "null")
+            {
+                Run runWinner = new Run($"{winner} has won!");
+                runWinner.Foreground = Brushes.White;
+                runWinner.FontSize = 40;
 
-            TextBlock winnerTextBlock = new TextBlock();
-            winnerTextBlock.Inlines.Add(runWinner);
-            winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
-            winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            winnerTextBlock.Margin = new Thickness(10);
+                winnerTextBlock = new TextBlock();
+                winnerTextBlock.Inlines.Add(runWinner);
+                winnerTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                winnerTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
+                winnerTextBlock.Margin = new Thickness(10);
 
-            MainGrid.Children.Add(winnerTextBlock);
+                MainGrid.Children.Add(winnerTextBlock);
+            }
+            else
+            {
+                // Remove the winnerTextBlock when winner is "null"
+                MainGrid.Children.Remove(winnerTextBlock);
+                winnerTextBlock = null;
+            }
         }
 
+
+
+        private void RestartClicked(object sender, RoutedEventArgs e)
+        {
+            ClearGrid();
+            MakeGrid(GridSize);
+            Run runPlayerText = new Run(" ");
+            gameType.ResetScore();
+            winner = "null";
+            WinText(winner);
+            if ((bool)RedComputer.IsChecked)
+            {
+                computerMove();
+            }
+            
+        }
+
+        private void computerMove()
+        {
+            Random random = new Random();
+            int x = random.Next(0, GridSize);
+            int y = random.Next(0, GridSize);
+
+            //Make sure the computer selects a move that is possible
+            while (gameType.gameBoard[x][y] != 0 && !gameType.IsGridFull((bool)SimpleButton.IsChecked, GridSize))
+            {
+                x = random.Next(0, GridSize);
+                y = random.Next(0, GridSize);
+            }
+
+
+            // Get the button at the specified row and column
+            Button buttonToClick = SOSGrid.Children
+                .OfType<Button>()
+                .FirstOrDefault(b => Grid.GetRow(b) == x && Grid.GetColumn(b) == y);
+
+            if (buttonToClick != null)
+            {
+                // Select a random radio button
+                Random randomRadioButton = new Random();
+                bool randomSButtonChecked = randomRadioButton.Next(2) == 0;
+
+                // Set the corresponding radio button
+                SButton.IsChecked = randomSButtonChecked;
+                OButton.IsChecked = !randomSButtonChecked;
+                buttonToClick.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+            }
+        }
     }
 }

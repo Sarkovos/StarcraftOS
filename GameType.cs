@@ -111,6 +111,12 @@ namespace StarcraftOS
             }
         }
 
+        public void ResetScore()
+        {
+            blueScore = 0;
+            redScore = 0;
+        }
+
         public void CheckForSOS(int x, int y, bool isS)
         {
             //1 is S, 2 is O
@@ -217,7 +223,7 @@ namespace StarcraftOS
                 }
 
                 // Check if the current position is within bounds
-                if (y - 2 >= 0 && x + 1 < gameBoard.Count && y - 2 < gameBoard[x].Count)
+                if (y - 2 >= 0 && x + 2 < gameBoard.Count && y - 2 < gameBoard[x].Count)
                 {
                     // * * * * *
                     // * * * * *
