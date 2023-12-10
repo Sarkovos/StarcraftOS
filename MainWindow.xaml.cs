@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace StarcraftOS
 {
@@ -28,6 +30,8 @@ namespace StarcraftOS
         private int _gridSize;
         private GameType gameType;
 
+        //Pass the filepath and filename to the StreamWriter Constructor
+        
 
 
         string winner = "null";
@@ -51,15 +55,48 @@ namespace StarcraftOS
             return SOSGrid;
         }
 
+        private void InitializeFile(string fileName)
+        {
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+
+            // Check if the file already exists
+            if (!File.Exists(filePath))
+            {
+                // If not, create a new file with some initial content
+                using (StreamWriter initialWriter = new StreamWriter(filePath, false))
+                {
+                    initialWriter.WriteLine("==== New Run ====");
+                }
+            }
+        }
+
+        public void WriteLinesToFile(string fileName, string line)
+        {
+            try
+            {
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+
+                // Use StreamWriter to write lines to the file
+                using (StreamWriter writer = new StreamWriter(filePath, true))
+                {
+                    writer.WriteLine(line);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error writing to file: {ex.Message}");
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+            InitializeFile("Recording.txt");
             gameType = new GameType(this);
             GridSize = defaultGridSize;
             DataContext = this;
             GridSizeTextBox.Text = GridSize.ToString();
             MakeGrid(GridSize);
-
             turnTextBlock.Inlines.Clear();
             Run runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
             turnTextBlock.Inlines.Add(runPlayerText);
@@ -182,6 +219,17 @@ namespace StarcraftOS
 
                 turnTextBlock.Inlines.Clear();
                 runPlayerText = new Run($"Player Turn: {Player.Instance.PlayerTurnString()}");
+
+                if (SButton.IsChecked == true)
+                {
+                    WriteLinesToFile("Recording.txt", $"Player Turn: {Player.Instance.PlayerTurnString()} playing S on {x}, {y}");
+                }
+
+                else
+                {
+                    WriteLinesToFile("Recording.txt", $"Player Turn: {Player.Instance.PlayerTurnString()} playing O on {x}, {y}");
+                }
+
                 turnTextBlock.Inlines.Add(runPlayerText);
                 gameType.CheckForSOS(x, y, (bool)SButton.IsChecked);
                 winRules();
