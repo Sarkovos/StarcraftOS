@@ -60,7 +60,7 @@ namespace StarcraftOS
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
 
             // Check if the file already exists
-            if (!File.Exists(filePath))
+            if (File.Exists(filePath))
             {
                 // If not, create a new file with some initial content
                 using (StreamWriter initialWriter = new StreamWriter(filePath, false))
